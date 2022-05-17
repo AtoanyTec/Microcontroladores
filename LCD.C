@@ -26,29 +26,6 @@
 void DelayFor18TCY(void);
 void DelayPORXLCD(void);
 void DelayXLCD(void);
-
-void escribir_eeprom(char direccion, char dato){
-    while(EECON1bits.WR==1);  //1. esperar a que no haya una escritura en curso
-                              
-    EEADR=direccion;          //2. cargar la direccion
-    EEDATA=dato;              //3. cargar el dato
-    EECON1bits.EEPGD=0;       //4. setear EEPGD a 0
-    EECON1bits.WREN=1;        //5. se habilita la escritura en la EEPROM 
-    INTCONbits.GIE=0;         //6. deshabilitar las interrupcione
-    EECON2=0x55;              //7. cargar en EECON2 0x55
-    EECON2=0xaa;              //8. cargar en EECON2 0xaa
-    EECON1bits.WR=1;          //9. iniciar la escritura en la EEPROM
-    INTCONbits.GIE=1;         //10. habilitar las interrupciones
-    EECON1bits.WREN=0;        //11. deshabilitar la escritura en la EEPROM
-    while(EECON1bits.WR==1);  //12. comprobar que la escritura terminó
-}
-char leer_eeprom(char direccion){
-    EEADR=direccion;      //1. cargar la direccion
-    EECON1bits.EEPGD=0;   //2. acceso a la EEPROM
-    EECON1bits.RD=1;      //3. habilitar la lectura de la EEPROM
-    return EEDATA;        //4. en el registro EEDATA se encuentra el dato
-                          
-}
  
 int main() {
 //Configurando LCD
@@ -60,9 +37,7 @@ WriteCmdXLCD(0x06);
 //Desactivando el cursor.
 WriteCmdXLCD(0x0C);
 
-escribir_eeprom(0, 'W');
 char letra;
-//letra = leer_eeprom(0);
 letra = 'A';
  
 while(1)
